@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for, session
+from flask import Blueprint, render_template, request, url_for, session, flash
 from rabbit_delivery.models import *
 from werkzeug.utils import redirect
 
@@ -46,15 +46,18 @@ def login():
     user_data = rabbitUser.query.filter_by(id=id).first()
 
     if not user_data:
-        return "없는 아이디입니다."
+        flash("존재하지 않는 아이디입니다.")
+        return redirect(url_for('main.login_try'))
     elif password != user_data.password:
-        return "로그인 실패"
+        flash("아이디와 비밀번호가 일치하지 않습니다.")
+        return redirect(url_for('main.login_try'))
     else:
         session.clear()
         session['user_id'] = id
         session['nickname'] = user_data.nickname
 
-        return "로그인 성공"
+        flash("안녕하세요, {}님!".format(user_data.nickname))
+        return redirect(url_for('main.home'))
 
 @bp.route('/register')
 def join():
