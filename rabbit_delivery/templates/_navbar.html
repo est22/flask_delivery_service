@@ -15,15 +15,14 @@
 
         <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
             {% if session['user_id'] %}
-            <ul class="nav navbar-nav navbar-right">
-                <li class="nav-item">
-                    <span class="nav-link" style="color:white;"></span>
-                        <a class="nav-link" href="{{ url_for('main.join') }}">안녕하세요! {{session['nickname']}}님!</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('main.login') }}">로그아웃</a>
-                </li>
-            </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item">
+                        <span class="nav-link" style="color:white;">안녕하세요! {{ session['nickname']}}님!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.logout') }}">로그아웃</a>
+                    </li>
+                </ul>
             {% else %}
                 <ul class="nav navbar-nav navbar-right">
                     <li class="nav-item">
@@ -33,9 +32,7 @@
                         <a class="nav-link" href="{{ url_for('main.login') }}">로그인</a>
                     </li>
                 </ul>
-                
             {% endif %}
-
         </div>
     </div>
 </nav>
