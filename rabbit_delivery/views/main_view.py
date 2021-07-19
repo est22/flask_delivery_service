@@ -27,7 +27,9 @@ def home():
 def store_detail(store_id):
     store_info = rabbitStore.query.filter_by(id=store_id).first()
     store_menu = rabbitMenu.query.filter_by(store_id=store_id).all()
-    return render_template('store_detail.html', store_info=store_info, store_menu=store_menu)
+    store_review = rabbitReview.query.filter_by(store_id=store_id).all()
+    return render_template('store_detail.html', store_info=store_info, store_menu=store_menu,
+    review_info=store_review)
 
 @bp.route('/login', methods=('GET',))
 def login_try():
@@ -88,3 +90,29 @@ def register():
             return "이미 가입된 아이디입니다."
 
         return redirect(url_for('main.home'))
+
+
+
+@bp.route('/write_review/<int:store_id>', methods=('POST',))
+def create_review(store_id):
+    if request.method == 'POST':
+        review = rabbitReview(user_id=session['user_id'], store_id=store_id,
+        rating=int(request.form['star']), content=request.form['review'])
+        db.session.add(review)
+        db.session.commit()
+
+    flash("리뷰가 성공적으로 작성되었습니다.")
+    return redirect(url_for('main.store_detail', store_id=store_id))
+
+@bp.route('/delete_review/<int:store_id>/<int:review_id>')
+def delete_review(store_id, review_id):
+    review_info = rabbitReview.query.filter_by(id=review_id).first()
+    
+    if review_info.user_id != session['user_id']:
+        flash("삭제할 권한이 없습니다.")
+    else:
+        db.session.delete(review_info)
+        db.session.commit()
+        flash("삭제가 완료되었습니다.")
+
+    return redirect(url_for('main.store_detail', store_id=store_id))
