@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg navbar-dark border-bottom" style="background-color: #7979D3;">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('main.home') }}">배달의 토끼</a>
+        <button
+            class="navbar-toggler ml-auto"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
+            
+            <ul class="nav navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.join') }}">회원가입</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.login') }}">로그인</a>
+                </li>
+            </ul>
+
+
+        </div>
+    </div>
+</nav>
