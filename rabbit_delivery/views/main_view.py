@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, url_for, session, flash
 from rabbit_delivery.models import *
 from werkzeug.utils import redirect
+from bcrypt import hashpw, checkpw, gensalt
 
 '''
 view는 우리 눈에 보이는 부분을 관리합니다.
@@ -48,7 +49,7 @@ def login():
     if not user_data:
         flash("존재하지 않는 아이디입니다.")
         return redirect(url_for('main.login_try'))
-    elif password != user_data.password:
+    elif not checkpw(password.encode("utf-8"), user_data.password):
         flash("아이디와 비밀번호가 일치하지 않습니다.")
         return redirect(url_for('main.login_try'))
     else:
@@ -57,6 +58,7 @@ def login():
         session['nickname'] = user_data.nickname
 
         flash("안녕하세요, {}님!".format(user_data.nickname))
+
         return redirect(url_for('main.home'))
 
 @bp.route('/register')
@@ -66,6 +68,7 @@ def join():
 @bp.route('/logout')
 def logout():
     session.clear()
+    flash("로그아웃 되었습니다.")
     return redirect(url_for('main.home'))
 
 @bp.route('/register', methods=('POST',))
@@ -73,7 +76,7 @@ def register():
     if request.method == 'POST':
         user = rabbitUser.query.filter_by(id=request.form['user_id']).first()
         if not user:
-            password = request.form['password']
+            password = hashpw(request.form['password'].encode('utf-8'), gensalt())
 
             user = rabbitUser(id=request.form['user_id'], password=password,
             nickname=request.form['nickname'], telephone=request.form['telephone'])
@@ -81,6 +84,7 @@ def register():
             db.session.commit()
             
         else:
+            flash("이미 가입된 아이디입니다.")
             return "이미 가입된 아이디입니다."
 
         return redirect(url_for('main.home'))
